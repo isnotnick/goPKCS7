@@ -3,6 +3,7 @@ package pkcs7
 import (
 	"bytes"
 	"errors"
+	"fmt"
 )
 
 var encodeIndent = 0
@@ -187,7 +188,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		}
 		length = markerIndex
 		hack = 2
-		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
+		fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 	} else {
 		length = (int)(l)
 	}
