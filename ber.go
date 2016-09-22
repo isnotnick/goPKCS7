@@ -17,6 +17,8 @@ type asn1Structured struct {
 	content  []asn1Object
 }
 
+
+
 // Modified copy of LastIndex function from bytes package...
 func p7LastIndex(s, sep []byte) int {
 	
@@ -204,13 +206,9 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		// find length by searching content
 		fmt.Printf("--> (compute length) marker found at offset: %d\n", offset)
 		//markerIndex := bytes.LastIndex(ber[offset:], []byte{0x00, 0x00})
-		markerIndex := p7LastIndex(ber[offset:], []byte{0x00, 0x00})
+		markerIndex := bytes.Index(ber[offset:], []byte{0x00, 0x00})
 		if markerIndex == -1 {
-			fmt.Printf("No EOC found this time, trying from lastEOC at : %d\n", lastEOC)
-			markerIndex2 := p7LastIndex(ber[lastEOC:], []byte{0x00, 0x00})
-			if markerIndex2 == -1 {
-				return nil, 0, errors.New("ber2der: Invalid BER format TEST WITH ZERO - ")
-			}
+			return nil, 0, errors.New("ber2der: Invalid BER format TEST WITH ZERO - ")
 		}
 		length = markerIndex
 		hack = 2
