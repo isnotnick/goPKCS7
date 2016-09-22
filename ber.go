@@ -27,7 +27,7 @@ func p7LastIndex(s, sep []byte) int {
 	}
 	c := sep[0]
 	siz := len(s)
-	if siz = 2580 {
+	if siz == 2580 {
 		siz = siz + 2
 	}
 	for i := siz - n; i >= 0; i-- {
