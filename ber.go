@@ -203,10 +203,11 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	} else if l == 0x80 {
 		// find length by searching content
 		fmt.Printf("--> (compute length) marker found at offset: %d\n", offset)
-		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x00, 0x00})
-		//markerIndex := p7LastIndex(ber[offset:], []byte{0x00, 0x00})
+		//markerIndex := bytes.LastIndex(ber[offset:], []byte{0x00, 0x00})
+		markerIndex := p7LastIndex(ber[offset:], []byte{0x00, 0x00})
 		if markerIndex == -1 {
-			markerIndex2 := bytes.LastIndex(ber[lastEOC:], []byte{0x00, 0x00})
+			fmt.Printf("No EOC found this time, trying from lastEOC at : %d\n", lastEOC)
+			markerIndex2 := p7LastIndex(ber[lastEOC:], []byte{0x00, 0x00})
 			if markerIndex2 == -1 {
 				return nil, 0, errors.New("ber2der: Invalid BER format TEST WITH ZERO - ")
 			}
