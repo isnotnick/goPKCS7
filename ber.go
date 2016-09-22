@@ -182,7 +182,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	l := ber[offset]
 	offset++
 	hack := 0
-	lasEOC := 0
+	lastEOC := 0
 	if l > 0x80 {
 		numberOfBytes := (int)(l & 0x7F)
 		if numberOfBytes > 4 { // int is only guaranteed to be 32bit
