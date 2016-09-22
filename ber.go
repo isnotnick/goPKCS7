@@ -28,7 +28,7 @@ func p7LastIndex(s, sep []byte) int {
 	c := sep[0]
 
 	for i := len(s) - n; i >= 0; i-- {
-		fmt.Printf("Checking at position: %d to see if %d and %d are equal, and if %d and %d are the same. \n", i, s[i], c, s[i:i+n], sep)
+		//fmt.Printf("Checking at position: %d to see if %d and %d are equal, and if %d and %d are the same. \n", i, s[i], c, s[i:i+n], sep)
 		if s[i] == c && (n == 1 || bytes.Equal(s[i:i+n], sep)) {
 			return i
 		}
