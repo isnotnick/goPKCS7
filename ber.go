@@ -207,7 +207,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		length = markerIndex
 		hack = 2
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
-		fmt.Printf("--> EOS marker found at offset: %d\n", offset)
+		fmt.Printf("--> EOS marker found at offset: %d\n", markerIndex)
 	} else {
 		length = (int)(l)
 	}
