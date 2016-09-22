@@ -21,7 +21,7 @@ type asn1Structured struct {
 func p7LastIndex(s, sep []byte) int {
 	
 	n := len(sep)
-	fmt.Printf("Slice passed is %d long\n", n)
+	fmt.Printf("Slice passed is %d long\n", len(s))
 	if n == 0 {
 		return len(s)
 	}
