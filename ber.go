@@ -184,7 +184,6 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	l := ber[offset]
 	offset++
 	hack := 0
-	lastEOC := 0
 	if l > 0x80 {
 		numberOfBytes := (int)(l & 0x7F)
 		if numberOfBytes > 4 { // int is only guaranteed to be 32bit
@@ -212,7 +211,6 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		}
 		length = markerIndex
 		hack = 2
-		lastEOC = markerIndex
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 		fmt.Printf("--> EOS marker found at offset: %d\n\n", markerIndex)
 	} else {
