@@ -26,11 +26,8 @@ func p7LastIndex(s, sep []byte) int {
 		return len(s)
 	}
 	c := sep[0]
-	siz := len(s)
-	if siz == 2580 {
-		siz = siz + 2
-	}
-	for i := siz - n; i >= 0; i-- {
+
+	for i := len(s) - n; i >= 0; i-- {
 		fmt.Printf("Checking at position: %d to see if %d and %d are equal, and if %d and %d are the same. \n", i, s[i], c, s[i:i+n], sep)
 		if s[i] == c && (n == 1 || bytes.Equal(s[i:i+n], sep)) {
 			return i
@@ -185,6 +182,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	l := ber[offset]
 	offset++
 	hack := 0
+	lasEOC := 0
 	if l > 0x80 {
 		numberOfBytes := (int)(l & 0x7F)
 		if numberOfBytes > 4 { // int is only guaranteed to be 32bit
@@ -205,13 +203,17 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	} else if l == 0x80 {
 		// find length by searching content
 		fmt.Printf("--> (compute length) marker found at offset: %d\n", offset)
-		//markerIndex := bytes.LastIndex(ber[offset:], []byte{0x00, 0x00})
-		markerIndex := p7LastIndex(ber[offset:], []byte{0x00, 0x00})
+		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x00, 0x00})
+		//markerIndex := p7LastIndex(ber[offset:], []byte{0x00, 0x00})
 		if markerIndex == -1 {
-			return nil, 0, errors.New("ber2der: Invalid BER format TEST WITH ZERO - ")
+			markerIndex2 := bytes.LastIndex(ber[lastEOC:], []byte{0x00, 0x00})
+			if markerIndex2 == -1 {
+				return nil, 0, errors.New("ber2der: Invalid BER format TEST WITH ZERO - ")
+			}
 		}
 		length = markerIndex
 		hack = 2
+		lastEOC = markerIndex
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 		fmt.Printf("--> EOS marker found at offset: %d\n\n", markerIndex)
 	} else {
