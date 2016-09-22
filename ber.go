@@ -19,14 +19,14 @@ type asn1Structured struct {
 
 // Modified copy of LastIndex function from bytes package...
 func p7LastIndex(s, sep []byte) int {
-		n := len(sep)
-		if n == 0 {
-			return len(s)
-		}
-		c := sep[0]
-		for i := len(s) - n; i >= 0; i-- {
-			fmt.Printf("Checking at position: %d \n", i)
-			if s[i] == c && (n == 1 || bytes.Equal(s[i:i+n], sep)) {
+	n := len(sep)
+	if n == 0 {
+		return len(s)
+	}
+	c := sep[0]
+	for i := len(s) - n; i >= 0; i-- {
+		fmt.Printf("Checking at position: %d to see if %d and %d are equal, and if %d and %d are the same. \n", i, s[i], c, s[i:i+n], sep)
+		if s[i] == c && (n == 1 || bytes.Equal(s[i:i+n], sep)) {
 			return i
 		}
 	}
