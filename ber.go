@@ -161,7 +161,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	// read length
 	var length int
 	l := ber[offset]
-	offset++
+	//offset++
 	hack := 0
 	if l > 0x80 {
 		numberOfBytes := (int)(l & 0x7F)
