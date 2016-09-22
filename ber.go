@@ -19,7 +19,9 @@ type asn1Structured struct {
 
 // Modified copy of LastIndex function from bytes package...
 func p7LastIndex(s, sep []byte) int {
+	
 	n := len(sep)
+	fmt.Printf("Slice passed is %d long\n", n)
 	if n == 0 {
 		return len(s)
 	}
