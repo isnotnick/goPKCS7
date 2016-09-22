@@ -17,27 +17,6 @@ type asn1Structured struct {
 	content  []asn1Object
 }
 
-
-
-// Modified copy of LastIndex function from bytes package...
-func p7LastIndex(s, sep []byte) int {
-	
-	n := len(sep)
-	fmt.Printf("Slice passed is %d long\n", len(s))
-	if n == 0 {
-		return len(s)
-	}
-	c := sep[0]
-
-	for i := len(s) - n; i >= 0; i-- {
-		//fmt.Printf("Checking at position: %d to see if %d and %d are equal, and if %d and %d are the same. \n", i, s[i], c, s[i:i+n], sep)
-		if s[i] == c && (n == 1 || bytes.Equal(s[i:i+n], sep)) {
-			return i
-		}
-	}
-	return -1
-}
-
 func (s asn1Structured) EncodeTo(out *bytes.Buffer) error {
 	//fmt.Printf("%s--> tag: % X\n", strings.Repeat("| ", encodeIndent), s.tagBytes)
 	encodeIndent++
@@ -155,7 +134,7 @@ func encodeLength(out *bytes.Buffer, length int) (err error) {
 }
 
 func readObject(ber []byte, offset int) (asn1Object, int, error) {
-	fmt.Printf("\n====> Starting readObject at offset: %d\n\n", offset)
+	//fmt.Printf("\n====> Starting readObject at offset: %d\n\n", offset)
 	tagStart := offset
 	b := ber[offset]
 	offset++
@@ -203,16 +182,14 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		}
 	} else if l == 0x80 {
 		// find length by searching content
-		fmt.Printf("--> (compute length) marker found at offset: %d\n", offset)
-		//markerIndex := bytes.LastIndex(ber[offset:], []byte{0x00, 0x00})
-		markerIndex := bytes.Index(ber[offset:], []byte{0x00, 0x00})
+		fmt.Printf("--> indefinite length marker found at offset: %d\n", offset)
+		markerIndex := bytes.Index(ber[offset:], []byte{0x0, 0x0})
 		if markerIndex == -1 {
-			return nil, 0, errors.New("ber2der: Invalid BER format TEST WITH ZERO - ")
+			return nil, 0, errors.New("ber2der: Invalid BER format")
 		}
 		length = markerIndex
 		hack = 2
-		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
-		fmt.Printf("--> EOS marker found at offset: %d\n\n", markerIndex)
+		fmt.Printf("--> (compute length) EOC marker found at offset: %d\n", markerIndex+offset)
 	} else {
 		length = (int)(l)
 	}
