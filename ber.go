@@ -161,7 +161,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	// read length
 	var length int
 	l := ber[offset]
-	//offset++
+	offset++
 	hack := 0
 	if l > 0x80 {
 		numberOfBytes := (int)(l & 0x7F)
@@ -182,6 +182,10 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		}
 	} else if l == 0x80 {
 		// find length by searching content
+		if offset == 1 {
+			//	If there was an indef length object at offset 0...
+			fmt.Printf("--> We started with a bloody indef length: %d\n", offset)
+		}
 		fmt.Printf("--> indefinite length marker found at offset: %d\n", offset)
 		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
 		if markerIndex == -1 {
