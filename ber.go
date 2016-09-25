@@ -217,6 +217,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 			content:  ber[offset:contentEnd],
 		}
 	} else {
+		fmt.Printf("SubObject\n")
 		var subObjects []asn1Object
 		for offset < contentEnd {
 			var subObj asn1Object
