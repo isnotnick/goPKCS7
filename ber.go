@@ -134,7 +134,7 @@ func encodeLength(out *bytes.Buffer, length int) (err error) {
 }
 
 func readObject(ber []byte, offset int) (asn1Object, int, error) {
-	//fmt.Printf("\n====> Starting readObject at offset: %d\n\n", offset)
+	fmt.Printf("\n====> Starting readObject at offset: %d\n\n", offset)
 	tagStart := offset
 	b := ber[offset]
 	offset++
