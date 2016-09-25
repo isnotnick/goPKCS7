@@ -185,7 +185,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		fmt.Printf("--> indefinite length marker found at offset: %d\n", offset)
 		markerIndex := 0
 		if offset == 2 {
-			markerIndex = len(ber)
+			markerIndex = len(ber) - 2
 		} else {
 			markerIndex = bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
 			if markerIndex == -1 {
