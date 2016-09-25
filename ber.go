@@ -162,7 +162,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	var length int
 	l := ber[offset]
 	offset++
-	hack := 2
+	hack := 0
 	if l > 0x80 {
 		numberOfBytes := (int)(l & 0x7F)
 		if numberOfBytes > 4 { // int is only guaranteed to be 32bit
@@ -194,7 +194,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		}
 		
 		length = markerIndex
-		//hack = 2
+		hack = 2
 		fmt.Printf("--> (compute length) EOC marker found at: %d (or %d) \n", markerIndex, markerIndex+offset)
 	} else {
 		length = (int)(l)
@@ -207,7 +207,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	}
 	fmt.Printf("--> content start : %d\n", offset)
 	fmt.Printf("--> content end   : %d\n", contentEnd)
-	fmt.Printf("--> content       : % X\n", ber[offset:contentEnd])
+	//fmt.Printf("--> content       : % X\n", ber[offset:contentEnd])
 	var obj asn1Object
 	if kind == 0 {
 		obj = asn1Primitive{
