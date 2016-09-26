@@ -163,6 +163,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	l := ber[offset]
 	offset++
 	hack := 0
+	markerIndex := 0
 	if l > 0x80 {
 		numberOfBytes := (int)(l & 0x7F)
 		if numberOfBytes > 4 { // int is only guaranteed to be 32bit
@@ -182,8 +183,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		}
 	} else if l == 0x80 {
 		// find length by searching content
-		fmt.Printf("Searching for end of indefinite object. Object starts at: %d, search begins from %d\n", offset-2, len(ber)+2)
-		markerIndex := 0
+		fmt.Printf("Searching for end of indefinite object. Object starts at: %d, search (from the end) begins from %d\n", offset-2, len(ber[offset:]))
 		if offset == 2 {
 			markerIndex = len(ber) - 2
 		} else {
