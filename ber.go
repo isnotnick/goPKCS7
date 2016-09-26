@@ -190,6 +190,8 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		} else {
 			markerIndex = bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
 			if markerIndex == -1 {
+				eocCount := bytes.Count(ber[offset:], []byte{0x0, 0x0})
+				fmt.Println("Count: %d", eocCount)
 				return nil, 0, errors.New("ber2der: Invalid BER format")
 			}
 			hack = 2
