@@ -220,7 +220,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		for offset < contentEnd {
 			var subObj asn1Object
 			var err error
-			//fmt.Printf("Going for subobject, starting from %d\n", contentEnd)
+			fmt.Printf("Going for subobject, starting from %d\n", contentEnd)
 			subObj, offset, err = readObject(ber[:contentEnd], offset)
 			if err != nil {
 				return nil, 0, err
