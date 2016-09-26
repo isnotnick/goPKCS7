@@ -186,6 +186,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		}
 	} else if l == 0x80 {
 		// find length by searching content
+		fmt.Printf("Searching for end of indefinite object. Object starts at: %d, search begins from %d\n", offset-2, len(ber))
 		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
 		if markerIndex == -1 {
 			return nil, 0, errors.New("ber2der: Invalid BER format")
@@ -217,6 +218,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		for offset < contentEnd {
 			var subObj asn1Object
 			var err error
+			fmt.Printf("Going for subobject, starting from %d", contentEnd)
 			subObj, offset, err = readObject(ber[:contentEnd], offset)
 			if err != nil {
 				return nil, 0, err
