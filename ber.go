@@ -185,7 +185,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		// find length by searching content
 		fmt.Printf("Searching for end of indefinite object. Object starts at: %d, search (from the end) begins from %d\n", offset-2, len(ber))
 		if offset == 2 {
-			markerIndex = len(ber) - 2
+			markerIndex = len(ber) - 4
 			length = markerIndex
 		} else {
 			fmt.Printf("Searching for an EOC marker from: %d\n", offset)
