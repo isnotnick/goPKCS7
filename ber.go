@@ -192,10 +192,10 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 			if markerIndex == -1 {
 				return nil, 0, errors.New("ber2der: Invalid BER format")
 			}
+			hack = 2
 		}
 		
 		length = markerIndex
-		hack = 2
 		fmt.Printf("--> (compute length) EOC marker found at: %d (or %d) \n", markerIndex, markerIndex+offset)
 	} else {
 		length = (int)(l)
