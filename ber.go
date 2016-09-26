@@ -184,10 +184,10 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	} else if l == 0x80 {
 		// find length by searching content
 		fmt.Printf("Searching for end of indefinite object. Object starts at: %d, search (from the end) begins from %d\n", offset-2, len(ber[offset:]))
-		if offset == 2 {
-			markerIndex = len(ber) - 2
-			length = markerIndex
-		} else {
+		//if offset == 2 {
+		//	markerIndex = len(ber) - 2
+		//	length = markerIndex
+		//} else {
 			fmt.Printf("Searching for an EOC marker from: %d\n", offset)
 			markerIndex = bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
 			if markerIndex == -1 {
@@ -196,7 +196,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 			fmt.Printf("Found an EOC marker at: %d\n", markerIndex+offset)
 			length = markerIndex
 			hack = 2
-		}
+		//}
 		
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 	} else {
