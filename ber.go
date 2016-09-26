@@ -163,6 +163,9 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	l := ber[offset]
 	offset++
 	hack := 0
+	
+	indefCount := bytes.Count(ber[offset:], []byte{0x80})
+	fmt.Println("IndefCount: %d", indefCount)
 
 	if l > 0x80 {
 		numberOfBytes := (int)(l & 0x7F)
