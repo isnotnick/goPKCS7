@@ -18,7 +18,6 @@ import (
 	"math/big"
 	"sort"
 	"time"
-	"github.com/PromonLogicalis/asn1"
 
 	_ "crypto/sha1" // for crypto.SHA1
 )
@@ -125,8 +124,7 @@ func Parse(data []byte) (p7 *PKCS7, err error) {
 		return nil, errors.New("pkcs7: input data is empty")
 	}
 	var info contentInfo
-	//der, err := ber2der(data)
-	_, err := asn1.NewContext().Decode(data, &der)
+	der, err := ber2der(data)
 	if err != nil {
 		return nil, err
 	}
