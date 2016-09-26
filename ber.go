@@ -182,6 +182,8 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 			offset++
 		}
 	} else if l == 0x80 {
+		eocCount := bytes.Count(ber[offset:], []byte{0x0, 0x0})
+		fmt.Println("Count: %d", eocCount)
 		// find length by searching content
 		fmt.Printf("--> indefinite length marker found at offset: %d\n", offset - 2)
 		markerIndex := 0
@@ -190,8 +192,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		} else {
 			markerIndex = bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
 			if markerIndex == -1 {
-				eocCount := bytes.Count(ber[offset:], []byte{0x0, 0x0})
-				fmt.Println("Count: %d", eocCount)
+				
 				return nil, 0, errors.New("ber2der: Invalid BER format")
 			}
 			hack = 2
