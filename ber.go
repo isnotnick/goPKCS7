@@ -59,7 +59,7 @@ func ber2der(ber []byte) ([]byte, error) {
 	if len(ber) == 0 {
 		return nil, errors.New("ber2der: input ber is empty")
 	}
-	fmt.Printf("--> ber2der: Transcoding %d bytes\n", len(ber))
+	//fmt.Printf("--> ber2der: Transcoding %d bytes\n", len(ber))
 	out := new(bytes.Buffer)
 
 	obj, _, err := readObject(ber, 0)
@@ -134,7 +134,11 @@ func encodeLength(out *bytes.Buffer, length int) (err error) {
 }
 
 func readObject(ber []byte, offset int) (asn1Object, int, error) {
-	fmt.Printf("\n====> Starting readObject at offset: %d\n\n", offset)
+	//fmt.Printf("\n====> Starting readObject at offset: %d\n\n", offset)
+	
+	eocCount := bytes.Count(ber, []byte{0x0, 0x0})
+	fmt.Println("Count: %d", eocCount)
+	
 	tagStart := offset
 	b := ber[offset]
 	offset++
@@ -163,10 +167,6 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	l := ber[offset]
 	offset++
 	hack := 0
-	
-	indefCount := bytes.Count(ber[offset:], []byte{0x80})
-	fmt.Println("IndefCount: %d", indefCount)
-
 	if l > 0x80 {
 		numberOfBytes := (int)(l & 0x7F)
 		if numberOfBytes > 4 { // int is only guaranteed to be 32bit
@@ -185,35 +185,25 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 			offset++
 		}
 	} else if l == 0x80 {
-		eocCount := bytes.Count(ber[offset:], []byte{0x00, 0x00})
-		fmt.Println("Count: %d", eocCount)
 		// find length by searching content
-		fmt.Printf("--> indefinite length marker found at offset: %d\n", offset - 2)
-		markerIndex := 0
-		if offset == 2 {
-			markerIndex = len(ber) - offset
-		} else {
-			markerIndex = bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
-			if markerIndex == -1 {
-				
-				return nil, 0, errors.New("ber2der: Invalid BER format")
-			}
-			hack = 2
+		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
+		if markerIndex == -1 {
+			return nil, 0, errors.New("ber2der: Invalid BER format")
 		}
-		
 		length = markerIndex
-		fmt.Printf("--> (compute length) EOC marker found at: %d (or %d) \n", markerIndex, markerIndex+offset)
+		hack = 2
+		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 	} else {
 		length = (int)(l)
 	}
 
-	fmt.Printf("--> length        : %d\n", length)
+	//fmt.Printf("--> length        : %d\n", length)
 	contentEnd := offset + length
 	if contentEnd > len(ber) {
 		return nil, 0, errors.New("ber2der: BER tag length is more than available data")
 	}
-	fmt.Printf("--> content start : %d\n", offset)
-	fmt.Printf("--> content end   : %d\n", contentEnd)
+	//fmt.Printf("--> content start : %d\n", offset)
+	//fmt.Printf("--> content end   : %d\n", contentEnd)
 	//fmt.Printf("--> content       : % X\n", ber[offset:contentEnd])
 	var obj asn1Object
 	if kind == 0 {
@@ -223,7 +213,6 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 			content:  ber[offset:contentEnd],
 		}
 	} else {
-		fmt.Printf("SubObject\n")
 		var subObjects []asn1Object
 		for offset < contentEnd {
 			var subObj asn1Object
