@@ -182,7 +182,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 			offset++
 		}
 	} else if l == 0x80 {
-		eocCount := bytes.Count(ber[offset:], []byte{0x0, 0x0})
+		eocCount := bytes.Count(ber[offset:], []byte{0x00, 0x00})
 		fmt.Println("Count: %d", eocCount)
 		// find length by searching content
 		fmt.Printf("--> indefinite length marker found at offset: %d\n", offset - 2)
