@@ -152,13 +152,13 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	tagEnd := offset
 
 	kind := b & 0x20
-	/*
+	
 		if kind == 0 {
 			fmt.Print("--> Primitive\n")
 		} else {
 			fmt.Print("--> Constructed\n")
 		}
-	*/
+	
 	// read length
 	var length int
 	l := ber[offset]
