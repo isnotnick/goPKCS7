@@ -134,7 +134,7 @@ func encodeLength(out *bytes.Buffer, length int) (err error) {
 }
 
 func readObject(ber []byte, offset int) (asn1Object, int, error) {
-	//fmt.Printf("\n====> Starting readObject at offset: %d\n\n", offset)
+	fmt.Printf("\n====> Starting readObject at offset: %d\n\n", offset)
 	tagStart := offset
 	b := ber[offset]
 	offset++
@@ -175,8 +175,8 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		if 0x0 == (int)(ber[offset]) {
 			return nil, 0, errors.New("ber2der: BER tag length has leading zero")
 		}
-		//fmt.Printf("--> (compute length) indicator byte: %x\n", l)
-		//fmt.Printf("--> (compute length) length bytes: % X\n", ber[offset:offset+numberOfBytes])
+		fmt.Printf("--> (compute length) indicator byte: %x\n", l)
+		fmt.Printf("--> (compute length) length bytes: % X\n", ber[offset:offset+numberOfBytes])
 		for i := 0; i < numberOfBytes; i++ {
 			length = length*256 + (int)(ber[offset])
 			offset++
@@ -208,9 +208,9 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	if contentEnd > len(ber) {
 		return nil, 0, errors.New("ber2der: BER tag length is more than available data")
 	}
-	//fmt.Printf("--> content start : %d\n", offset)
-	//fmt.Printf("--> content end   : %d\n", contentEnd)
-	//fmt.Printf("--> content       : % X\n", ber[offset:contentEnd])
+	fmt.Printf("--> content start : %d\n", offset)
+	fmt.Printf("--> content end   : %d\n", contentEnd)
+	fmt.Printf("--> content       : % X\n", ber[offset:contentEnd])
 	var obj asn1Object
 	if kind == 0 {
 		obj = asn1Primitive{
@@ -223,7 +223,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		for offset < contentEnd {
 			var subObj asn1Object
 			var err error
-			//fmt.Printf("Going for subobject, starting from %d to %d\n", offset, contentEnd)
+			fmt.Printf("   Searching for subobject, starting from %d to %d\n", offset, contentEnd)
 			subObj, offset, err = readObject(ber[:contentEnd], offset)
 			if err != nil {
 				return nil, 0, err
