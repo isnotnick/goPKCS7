@@ -210,7 +210,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	}
 	fmt.Printf("--> content start : %d\n", offset)
 	fmt.Printf("--> content end   : %d\n", contentEnd)
-	fmt.Printf("--> content       : % X\n", ber[offset:contentEnd])
+	//fmt.Printf("--> content       : % X\n", ber[offset:contentEnd])
 	var obj asn1Object
 	if kind == 0 {
 		obj = asn1Primitive{
