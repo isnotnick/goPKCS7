@@ -256,13 +256,13 @@ func countEOCs(ber []byte) (int) {
         if l > 0x80 {
             numberOfBytes := (int)(l & 0x7F)
             if numberOfBytes > 4 { // int is only guaranteed to be 32bit
-                return 0
+                return 800
             }
             if numberOfBytes == 4 && (int)(ber[id]) > 0x7F {
-                return 0
+                return 900
             }
             if 0x0 == (int)(ber[id]) {
-                return 0
+                return 1000
             }
             for i := 0; i < numberOfBytes; i++ {
                 length = length*256 + (int)(ber[id])
