@@ -134,10 +134,6 @@ func encodeLength(out *bytes.Buffer, length int) (err error) {
 }
 
 func readObject(ber []byte, offset int) (asn1Object, int, error) {
-	//fmt.Printf("\nCompiling ordered slice of EOCs... \n")
-	eocCount := countEOCs(ber)
-	fmt.Printf("TEST TEST TEST: EOC Count: %d\n\n\n", eocCount)
-	
 	//fmt.Printf("\n====> Starting readObject at offset: %d\n\n", offset)
 	tagStart := offset
 	b := ber[offset]
@@ -217,7 +213,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		for offset < contentEnd {
 			var subObj asn1Object
 			var err error
-			subObj, offset, err = readObject(ber[:contentEnd], offset)
+			subObj, offset, err = readObject(ber[:contentEnd+hack], offset)
 			if err != nil {
 				return nil, 0, err
 			}
@@ -230,50 +226,4 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	}
 
 	return obj, contentEnd + hack, nil
-}
-
-
-func countEOCs(ber []byte) (int) {
-    indefCount := 0
-
-    for id := 0; id < len(ber); id++ {
-	    fmt.Printf("Counter at: %d\n",id)
-        b := ber[id]
-        id++
-        tag := b & 0x1F // last 5 bits
-        if tag == 0x1F {
-            tag = 0
-            for ber[id] >= 0x80 {
-                tag = tag*128 + ber[id] - 0x80
-                id++
-            }
-            tag = tag*128 + ber[id] - 0x80
-            id++
-        }
-
-        var length int
-        l := ber[id]
-        id++
-        if l > 0x80 {
-            numberOfBytes := (int)(l & 0x7F)
-            if numberOfBytes > 4 { // int is only guaranteed to be 32bit
-                return 800
-            }
-            if numberOfBytes == 4 && (int)(ber[id]) > 0x7F {
-                return 900
-            }
-            if 0x0 == (int)(ber[id]) {
-                return 1000
-            }
-            for i := 0; i < numberOfBytes; i++ {
-                length = length*256 + (int)(ber[id])
-                id = id + length
-            }
-        } else if l == 0x80 {
-            indefCount++
-	} else {
-	    id++
-	}
-    }
-    return indefCount
 }
