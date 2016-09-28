@@ -231,6 +231,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 			}
 			subObjects = append(subObjects, subObj)
 		}
+		fmt.Printf("   Making the object\n")
 		obj = asn1Structured{
 			tagBytes: ber[tagStart:tagEnd],
 			content:  subObjects,
