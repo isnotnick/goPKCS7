@@ -186,7 +186,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		if markerIndex == -1 {
 			return nil, 0, errors.New("ber2der: Invalid BER format")
 		}*/
-		length = len(ber[offset:]) - offset
+		length = len(ber[offset:]) - 2
 		hack = 2
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 	} else {
