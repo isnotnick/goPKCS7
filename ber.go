@@ -266,7 +266,7 @@ func countEOCs(ber []byte) (int) {
             }
             for i := 0; i < numberOfBytes; i++ {
                 length = length*256 + (int)(ber[id])
-                id++
+                id = id + length
             }
         } else if l == 0x80 {
             indefCount++
