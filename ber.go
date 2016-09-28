@@ -237,7 +237,6 @@ func countEOCs(ber []byte) (int) {
     indefCount := 0
 
     for id := 0; id < len(ber); id++ {
-        tagStart := id
         b := ber[id]
         id++
         tag := b & 0x1F // last 5 bits
@@ -250,7 +249,6 @@ func countEOCs(ber []byte) (int) {
             tag = tag*128 + ber[id] - 0x80
             id++
         }
-        tagEnd := id
 
         var length int
         l := ber[id]
