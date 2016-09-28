@@ -3,7 +3,7 @@ package pkcs7
 import (
 	"bytes"
 	"errors"
-	"fmt"
+	_"fmt"
 )
 
 var encodeIndent = 0
