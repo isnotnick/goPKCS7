@@ -258,13 +258,13 @@ func countEOCs(ber []byte) (int) {
         if l > 0x80 {
             numberOfBytes := (int)(l & 0x7F)
             if numberOfBytes > 4 { // int is only guaranteed to be 32bit
-                return nil, 0, errors.New("ber2der: BER tag length too long")
+                return 0
             }
             if numberOfBytes == 4 && (int)(ber[id]) > 0x7F {
-                return nil, 0, errors.New("ber2der: BER tag length is negative")
+                return 0
             }
             if 0x0 == (int)(ber[id]) {
-                return nil, 0, errors.New("ber2der: BER tag length has leading zero")
+                return 0
             }
             for i := 0; i < numberOfBytes; i++ {
                 length = length*256 + (int)(ber[id])
