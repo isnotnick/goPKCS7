@@ -3,7 +3,7 @@ package pkcs7
 import (
 	"bytes"
 	"errors"
-	_"fmt"
+	"fmt"
 )
 
 var encodeIndent = 0
@@ -18,7 +18,7 @@ type asn1Structured struct {
 }
 
 func (s asn1Structured) EncodeTo(out *bytes.Buffer) error {
-	fmt.Printf("%s--> tag: % X\n", strings.Repeat("| ", encodeIndent), s.tagBytes)
+	//fmt.Printf("%s--> tag: % X\n", strings.Repeat("| ", encodeIndent), s.tagBytes)
 	encodeIndent++
 	inner := new(bytes.Buffer)
 	for _, obj := range s.content {
@@ -198,8 +198,8 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	if contentEnd > len(ber) {
 		return nil, 0, errors.New("ber2der: BER tag length is more than available data")
 	}
-	//fmt.Printf("--> content start : %d\n", offset)
-	//fmt.Printf("--> content end   : %d\n", contentEnd)
+	fmt.Printf("--> content start : %d\n", offset)
+	fmt.Printf("--> content end   : %d\n", contentEnd)
 	//fmt.Printf("--> content       : % X\n", ber[offset:contentEnd])
 	var obj asn1Object
 	if kind == 0 {
