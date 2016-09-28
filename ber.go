@@ -3,8 +3,6 @@ package pkcs7
 import (
 	"bytes"
 	"errors"
-	"fmt"
-	"strings"
 )
 
 var encodeIndent = 0
@@ -19,7 +17,7 @@ type asn1Structured struct {
 }
 
 func (s asn1Structured) EncodeTo(out *bytes.Buffer) error {
-	fmt.Printf("%s--> tag: % X\n", strings.Repeat("| ", encodeIndent), s.tagBytes)
+	//fmt.Printf("%s--> tag: % X\n", strings.Repeat("| ", encodeIndent), s.tagBytes)
 	encodeIndent++
 	inner := new(bytes.Buffer)
 	for _, obj := range s.content {
@@ -49,8 +47,8 @@ func (p asn1Primitive) EncodeTo(out *bytes.Buffer) error {
 	if err = encodeLength(out, p.length); err != nil {
 		return err
 	}
-	fmt.Printf("%s--> tag: % X length: %d\n", strings.Repeat("| ", encodeIndent), p.tagBytes, p.length)
-	fmt.Printf("%s--> content length: %d\n", strings.Repeat("| ", encodeIndent), len(p.content))
+	//fmt.Printf("%s--> tag: % X length: %d\n", strings.Repeat("| ", encodeIndent), p.tagBytes, p.length)
+	//fmt.Printf("%s--> content length: %d\n", strings.Repeat("| ", encodeIndent), len(p.content))
 	out.Write(p.content)
 
 	return nil
@@ -135,7 +133,11 @@ func encodeLength(out *bytes.Buffer, length int) (err error) {
 }
 
 func readObject(ber []byte, offset int) (asn1Object, int, error) {
-	fmt.Printf("\n====> Starting readObject at offset: %d\n\n", offset)
+	//fmt.Printf("\nCompiling ordered slice of EOCs... \n")
+	eocCount := countEOCs(ber)
+	fmt.Printf("TEST TEST TEST: EOC Count: %d\n\n\n", eocCount)
+	
+	//fmt.Printf("\n====> Starting readObject at offset: %d\n\n", offset)
 	tagStart := offset
 	b := ber[offset]
 	offset++
@@ -152,19 +154,18 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	tagEnd := offset
 
 	kind := b & 0x20
-	
+	/*
 		if kind == 0 {
 			fmt.Print("--> Primitive\n")
 		} else {
 			fmt.Print("--> Constructed\n")
 		}
-	
+	*/
 	// read length
 	var length int
 	l := ber[offset]
 	offset++
 	hack := 0
-	markerIndex := 0
 	if l > 0x80 {
 		numberOfBytes := (int)(l & 0x7F)
 		if numberOfBytes > 4 { // int is only guaranteed to be 32bit
@@ -176,29 +177,20 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		if 0x0 == (int)(ber[offset]) {
 			return nil, 0, errors.New("ber2der: BER tag length has leading zero")
 		}
-		fmt.Printf("--> (compute length) indicator byte: %x\n", l)
-		fmt.Printf("--> (compute length) length bytes: % X\n", ber[offset:offset+numberOfBytes])
+		//fmt.Printf("--> (compute length) indicator byte: %x\n", l)
+		//fmt.Printf("--> (compute length) length bytes: % X\n", ber[offset:offset+numberOfBytes])
 		for i := 0; i < numberOfBytes; i++ {
 			length = length*256 + (int)(ber[offset])
 			offset++
 		}
 	} else if l == 0x80 {
 		// find length by searching content
-		fmt.Printf("Searching for end of indefinite object. Object starts at: %d, search (from the end) begins from %d\n", offset-2, len(ber[offset:]))
-		//if offset == 2 {
-		//	markerIndex = len(ber) - 2
-		//	length = markerIndex
-		//} else {
-			fmt.Printf("Searching for an EOC marker from: %d\n", offset)
-			markerIndex = bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
-			if markerIndex == -1 {
-				return nil, 0, errors.New("ber2der: Invalid BER format")
-			}
-			fmt.Printf("Found an EOC marker at: %d\n", markerIndex+offset)
-			length = markerIndex
-			hack = 2
-		//}
-		
+		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
+		if markerIndex == -1 {
+			return nil, 0, errors.New("ber2der: Invalid BER format")
+		}
+		length = markerIndex
+		hack = 2
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 	} else {
 		length = (int)(l)
@@ -209,8 +201,8 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	if contentEnd > len(ber) {
 		return nil, 0, errors.New("ber2der: BER tag length is more than available data")
 	}
-	fmt.Printf("--> content start : %d\n", offset)
-	fmt.Printf("--> content end   : %d\n", contentEnd)
+	//fmt.Printf("--> content start : %d\n", offset)
+	//fmt.Printf("--> content end   : %d\n", contentEnd)
 	//fmt.Printf("--> content       : % X\n", ber[offset:contentEnd])
 	var obj asn1Object
 	if kind == 0 {
@@ -224,14 +216,12 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		for offset < contentEnd {
 			var subObj asn1Object
 			var err error
-			fmt.Printf("   Searching for subobject, starting from %d to %d\n", offset, contentEnd)
 			subObj, offset, err = readObject(ber[:contentEnd], offset)
 			if err != nil {
 				return nil, 0, err
 			}
 			subObjects = append(subObjects, subObj)
 		}
-		fmt.Printf("   Making the object\n")
 		obj = asn1Structured{
 			tagBytes: ber[tagStart:tagEnd],
 			content:  subObjects,
@@ -239,4 +229,49 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	}
 
 	return obj, contentEnd + hack, nil
+}
+
+
+func countEOCs(ber []byte) (int) {
+    indefCount := 0
+
+    for id := 0; id < len(ber); id++ {
+        tagStart := id
+        b := ber[id]
+        id++
+        tag := b & 0x1F // last 5 bits
+        if tag == 0x1F {
+            tag = 0
+            for ber[id] >= 0x80 {
+                tag = tag*128 + ber[id] - 0x80
+                id++
+            }
+            tag = tag*128 + ber[id] - 0x80
+            id++
+        }
+        tagEnd := id
+
+        var length int
+        l := ber[id]
+        id++
+        if l > 0x80 {
+            numberOfBytes := (int)(l & 0x7F)
+            if numberOfBytes > 4 { // int is only guaranteed to be 32bit
+                return nil, 0, errors.New("ber2der: BER tag length too long")
+            }
+            if numberOfBytes == 4 && (int)(ber[id]) > 0x7F {
+                return nil, 0, errors.New("ber2der: BER tag length is negative")
+            }
+            if 0x0 == (int)(ber[id]) {
+                return nil, 0, errors.New("ber2der: BER tag length has leading zero")
+            }
+            for i := 0; i < numberOfBytes; i++ {
+                length = length*256 + (int)(ber[id])
+                id++
+            }
+        } else if l == 0x80 {
+            indefCount++
+        }
+    }
+    return indefCount
 }
