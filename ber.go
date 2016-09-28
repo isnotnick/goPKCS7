@@ -237,6 +237,7 @@ func countEOCs(ber []byte) (int) {
     indefCount := 0
 
     for id := 0; id < len(ber); id++ {
+	    fmt.Printf("Counter at: %d\n",id)
         b := ber[id]
         id++
         tag := b & 0x1F // last 5 bits
@@ -270,7 +271,9 @@ func countEOCs(ber []byte) (int) {
             }
         } else if l == 0x80 {
             indefCount++
-        }
+	} else {
+	    id++
+	}
     }
     return indefCount
 }
