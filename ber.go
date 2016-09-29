@@ -238,7 +238,7 @@ func countEOC(ber []byte) (eocCount int) {
 
 	for offset := 0; offset < len(ber); {
 		fmt.Println("Offset at the start of the loop", offset)
-		
+
 		b := ber[offset]
 		offset++
 		tag := b & 0x1F // last 5 bits
@@ -285,7 +285,6 @@ func countEOC(ber []byte) (eocCount int) {
 				length = length*256 + (int)(ber[offset])
 				offset++
 			}
-			fmt.Println("length indicator: ", length)
 		} else if l == 0x80 {
 			// find length by searching content
 			/*markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
@@ -298,6 +297,7 @@ func countEOC(ber []byte) (eocCount int) {
 		} else {
 			offset++
 		}
+		offset = offset + length
 
 	}
 
