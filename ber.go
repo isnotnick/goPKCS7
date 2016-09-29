@@ -236,7 +236,6 @@ func countEOC(ber []byte) (eocCount int) {
 	eocCounter := 0
 
 	for offset := 0; offset < len(ber); {
-		tagStart := offset
 		b := ber[offset]
 		offset++
 		tag := b & 0x1F // last 5 bits
@@ -249,9 +248,8 @@ func countEOC(ber []byte) (eocCount int) {
 			tag = tag*128 + ber[offset] - 0x80
 			offset++
 		}
-		tagEnd := offset
 
-		kind := b & 0x20
+		//kind := b & 0x20
 
 		// read length
 		var length int
