@@ -64,7 +64,12 @@ func ber2der(ber []byte) ([]byte, error) {
 	//fmt.Printf("--> ber2der: Transcoding %d bytes\n", len(ber))
 	out := new(bytes.Buffer)
 
+	// Count the EoCs
 	_, _, err := readObjectForIndefCount(ber, 0)
+	// Re-arrange the slice of EoC positions
+	for e := 0; e < len(eocCount); e++ {
+		fmt.Printf("EoC - in slice %d at offset %d", e, eocCount[e])
+	}
 
 	obj, _, err := readObject(ber, 0)
 	if err != nil {
@@ -233,78 +238,6 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	return obj, contentEnd + hack, nil
 }
 
-func countEOC(ber []byte) (eocCount int) {
-	
-	eocCounter := 0
-
-	for offset := 0; offset < len(ber); {
-		fmt.Println("Offset at the start of the loop", offset)
-
-		b := ber[offset]
-		offset++
-		tag := b & 0x1F // last 5 bits
-		if tag == 0x1F {
-			tag = 0
-			for ber[offset] >= 0x80 {
-				tag = tag*128 + ber[offset] - 0x80
-				offset++
-			}
-			tag = tag*128 + ber[offset] - 0x80
-			offset++
-		}
-
-		//kind := b & 0x20
-
-		// read length
-		var length int
-		l := ber[offset]
-		offset++
-
-		if l > 0x80 {
-			numberOfBytes := (int)(l & 0x7F)
-			fmt.Println("numberOfBytes", numberOfBytes)
-			if numberOfBytes > 4 { // int is only guaranteed to be 32bit
-				//return nil, 0, errors.New("ber2der: BER tag length too long")
-				fmt.Println("Error 1")
-
-			}
-			if numberOfBytes == 4 && (int)(ber[offset]) > 0x7F {
-				//return nil, 0, errors.New("ber2der: BER tag length is negative")
-				//return -2
-				fmt.Println("Error 2")
-
-			}
-			if 0x0 == (int)(ber[offset]) {
-				//return nil, 0, errors.New("ber2der: BER tag length has leading zero")
-				//return -3
-				fmt.Println("Error 3")
-
-			}
-			fmt.Printf("--> (compute length) indicator byte: %x\n", l)
-			fmt.Printf("--> (compute length) length bytes: % X\n", ber[offset:offset+numberOfBytes])
-			for i := 0; i < numberOfBytes; i++ {
-				length = length*256 + (int)(ber[offset])
-				offset++
-			}
-		} else if l == 0x80 {
-			// find length by searching content
-			/*markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
-			if markerIndex == -1 {
-				return nil, 0, errors.New("ber2der: Invalid BER format")
-			}*/
-			fmt.Println("Got an indef at: ", offset)
-			eocCounter++
-			//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
-		} else {
-			offset++
-		}
-		offset = offset + length
-
-	}
-
-	return eocCounter
-}
-
 
 func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 
@@ -370,7 +303,7 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 		length = (int)(l)
 	}
 
-	fmt.Printf("--> length        : %d\n", length)
+	//fmt.Printf("--> length        : %d\n", length)
 	contentEnd := offset + length
 	if contentEnd > len(ber) {
 		return nil, 0, errors.New("ber2der: BER tag length is more than available data")
