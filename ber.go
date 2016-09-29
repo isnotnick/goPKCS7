@@ -233,9 +233,12 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 }
 
 func countEOC(ber []byte) (eocCount int) {
+	
 	eocCounter := 0
 
 	for offset := 0; offset < len(ber); {
+		fmt.Println("Offset at the start of the loop", offset)
+		
 		b := ber[offset]
 		offset++
 		tag := b & 0x1F // last 5 bits
