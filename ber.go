@@ -260,15 +260,18 @@ func countEOC(ber []byte) (eocCount int) {
 			numberOfBytes := (int)(l & 0x7F)
 			if numberOfBytes > 4 { // int is only guaranteed to be 32bit
 				//return nil, 0, errors.New("ber2der: BER tag length too long")
-				return -1
+				//return -1
+				offset++
 			}
 			if numberOfBytes == 4 && (int)(ber[offset]) > 0x7F {
 				//return nil, 0, errors.New("ber2der: BER tag length is negative")
-				return -2
+				//return -2
+				offset++
 			}
 			if 0x0 == (int)(ber[offset]) {
 				//return nil, 0, errors.New("ber2der: BER tag length has leading zero")
-				return -3
+				//return -3
+				offset++
 			}
 			//fmt.Printf("--> (compute length) indicator byte: %x\n", l)
 			//fmt.Printf("--> (compute length) length bytes: % X\n", ber[offset:offset+numberOfBytes])
