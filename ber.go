@@ -296,7 +296,7 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 			if markerIndex == -1 {
 				fmt.Println("doppelerror")
 			}
-			eocCount = append(eocCount, offset - markerIndex)
+			eocCount = append(eocCount, markerIndex - offset)
 		} else {
 			eocCount = append(eocCount, markerIndex + offset)
 		}
