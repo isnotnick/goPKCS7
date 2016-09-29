@@ -258,6 +258,7 @@ func countEOC(ber []byte) (eocCount int) {
 
 		if l > 0x80 {
 			numberOfBytes := (int)(l & 0x7F)
+			fmt.Println("numberOfBytes", numberOfBytes)
 			if numberOfBytes > 4 { // int is only guaranteed to be 32bit
 				//return nil, 0, errors.New("ber2der: BER tag length too long")
 				fmt.Println("Error 1")
@@ -288,7 +289,7 @@ func countEOC(ber []byte) (eocCount int) {
 			if markerIndex == -1 {
 				return nil, 0, errors.New("ber2der: Invalid BER format")
 			}*/
-			fmt.Println("Got an indef at: ", offset)
+			fmt.Println("Got an indef at: ", offset - 2)
 			eocCounter++
 			//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 		} else {
