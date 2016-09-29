@@ -279,8 +279,8 @@ func countEOC(ber []byte) (eocCount int) {
 				fmt.Println("Error 3")
 
 			}
-			//fmt.Printf("--> (compute length) indicator byte: %x\n", l)
-			//fmt.Printf("--> (compute length) length bytes: % X\n", ber[offset:offset+numberOfBytes])
+			fmt.Printf("--> (compute length) indicator byte: %x\n", l)
+			fmt.Printf("--> (compute length) length bytes: % X\n", ber[offset:offset+numberOfBytes])
 			for i := 0; i < numberOfBytes; i++ {
 				length = length*256 + (int)(ber[offset])
 				offset++
