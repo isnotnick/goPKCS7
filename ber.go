@@ -386,7 +386,7 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 		for offset < contentEnd {
 			var subObj asn1Object
 			var err error
-			subObj, offset, err = readObject(ber[:contentEnd], offset)
+			subObj, offset, err = readObjectForIndefCount(ber[:contentEnd], offset)
 			if err != nil {
 				return nil, 0, err
 			}
