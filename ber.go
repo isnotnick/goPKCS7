@@ -68,7 +68,7 @@ func ber2der(ber []byte) ([]byte, error) {
 	_, _, err := readObjectForIndefCount(ber, 0)
 	// Re-arrange the slice of EoC positions
 	for e := 0; e < len(eocCount); e++ {
-		fmt.Printf("EoC - in slice %d at offset %d", e, eocCount[e])
+		fmt.Printf("EoC - in slice %d at offset %d\n", e, eocCount[e])
 	}
 
 	obj, _, err := readObject(ber, 0)
@@ -295,7 +295,7 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 			markerIndex = 0
 		}
 		fmt.Println("GOT ONE...at: ", markerIndex)
-		eocCount = append(eocCount, markerIndex)
+		eocCount = append(eocCount, markerIndex + offset)
 		length = markerIndex
 		hack = 2
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
