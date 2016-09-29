@@ -293,7 +293,7 @@ func countEOC(ber []byte) (eocCount int) {
 			offset++
 		}
 
-		fmt.Printnl("Offset: ", offset)
+		fmt.Println("Offset: ", offset)
 	}
 
 	return eocCounter
