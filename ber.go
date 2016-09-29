@@ -354,10 +354,11 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 		}
 	} else if l == 0x80 {
 		// find length by searching content
-		fmt.Println("GOT ONE")
+		fmt.Println("GOT ONE...at: ", offset)
 		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
 		if markerIndex == -1 {
-			return nil, 0, errors.New("ber2der: Invalid BER format")
+			//return nil, 0, errors.New("ber2der: Invalid BER format")
+			markerIndex = 0
 		}
 		length = markerIndex
 		hack = 2
