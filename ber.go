@@ -293,6 +293,7 @@ func countEOC(ber []byte) (eocCount int) {
 			}*/
 			fmt.Println("Got an indef at: ", offset - 2)
 			eocCounter++
+			offset  = offset + 2
 			//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 		} else {
 			offset++
