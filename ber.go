@@ -62,6 +62,9 @@ func ber2der(ber []byte) ([]byte, error) {
 	//fmt.Printf("--> ber2der: Transcoding %d bytes\n", len(ber))
 	out := new(bytes.Buffer)
 
+	noOfEOCs := countEOC(ber)
+	fmt.Printf("Indef count: %d \n\n\n", noOfEOCs)
+
 	obj, _, err := readObject(ber, 0)
 	if err != nil {
 		return nil, err
@@ -134,9 +137,6 @@ func encodeLength(out *bytes.Buffer, length int) (err error) {
 }
 
 func readObject(ber []byte, offset int) (asn1Object, int, error) {
-	noOfEOCs := countEOC(ber)
-	fmt.Printf("Indef count: %d \n\n\n", noOfEOCs)
-
 
 	//fmt.Printf("\n====> Starting readObject at offset: %d\n\n", offset)
 	tagStart := offset
