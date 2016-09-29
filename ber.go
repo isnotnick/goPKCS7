@@ -233,6 +233,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 }
 
 func countEOC(ber []byte) (eocCount int) {
+	eocCounter := 0
 
 	for offset := 0; offset < len(ber); {
 		tagStart := offset
@@ -284,11 +285,12 @@ func countEOC(ber []byte) (eocCount int) {
 				return nil, 0, errors.New("ber2der: Invalid BER format")
 			}*/
 			fmt.Println("Got an indef")
+			eocCounter++
 			//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 		} else {
 			offset++
 		}
 	}
 
-
+	return eocCounter
 }
