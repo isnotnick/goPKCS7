@@ -296,9 +296,12 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 			if markerIndex == -1 {
 				fmt.Println("doppelerror")
 			}
+			eocCount = append(eocCount, offset - markerIndex)
+		} else {
+			eocCount = append(eocCount, markerIndex + offset)
 		}
 		fmt.Println("GOT ONE...at: ", markerIndex)
-		eocCount = append(eocCount, markerIndex + offset)
+		
 		length = markerIndex
 		hack = 2
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
