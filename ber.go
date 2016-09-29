@@ -237,8 +237,8 @@ func countEOC(ber []byte) (eocCount int) {
 
 	for offset := 0; offset < len(ber); {
 		
-		fmt.Println("Offset: ", offset)
-		
+		fmt.Printf("Offset: %d, length of ber: %d\n\n", offset, len(ber))
+
 		b := ber[offset]
 		offset++
 		tag := b & 0x1F // last 5 bits
