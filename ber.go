@@ -260,7 +260,7 @@ func countEOC(ber []byte) (eocCount int) {
 			numberOfBytes := (int)(l & 0x7F)
 			if numberOfBytes > 4 { // int is only guaranteed to be 32bit
 				//return nil, 0, errors.New("ber2der: BER tag length too long")
-				//return -1
+				return -1
 				offset++
 			}
 			if numberOfBytes == 4 && (int)(ber[offset]) > 0x7F {
