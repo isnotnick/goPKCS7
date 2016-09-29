@@ -232,7 +232,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	return obj, contentEnd + hack, nil
 }
 
-funct countEOC(ber []byte) (eocCount int) {
+func countEOC(ber []byte) (eocCount int) {
 
 	for offset := 0; offset < len(ber); {
 		tagStart := offset
