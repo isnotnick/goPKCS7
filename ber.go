@@ -287,7 +287,7 @@ func countEOC(ber []byte) (eocCount int) {
 				return nil, 0, errors.New("ber2der: Invalid BER format")
 			}*/
 			fmt.Println("Got an indef")
-			offset++
+			offset = offset + 2
 			eocCounter++
 			//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 		} else {
