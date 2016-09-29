@@ -8,6 +8,8 @@ import (
 
 var encodeIndent = 0
 
+var eocCount []int
+
 type asn1Object interface {
 	EncodeTo(writer *bytes.Buffer) error
 }
@@ -354,12 +356,13 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 		}
 	} else if l == 0x80 {
 		// find length by searching content
-		fmt.Println("GOT ONE...at: ", offset)
 		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
 		if markerIndex == -1 {
 			//return nil, 0, errors.New("ber2der: Invalid BER format")
 			markerIndex = 0
 		}
+		fmt.Println("GOT ONE...at: ", markerIndex)
+		append(eocCount, markerIndex)
 		length = markerIndex
 		hack = 2
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
