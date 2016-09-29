@@ -182,11 +182,11 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		}
 	} else if l == 0x80 {
 		// find length by searching content
-		/*markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
+		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
 		if markerIndex == -1 {
 			return nil, 0, errors.New("ber2der: Invalid BER format")
-		}*/
-		length = len(ber[offset:]) - 2
+		}
+		length = markerIndex
 		hack = 2
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 	} else {
@@ -226,4 +226,65 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 	}
 
 	return obj, contentEnd + hack, nil
+}
+
+funct countEOC(ber []byte) (eocCount int) {
+
+	for offset := 0; offset < len(ber); {
+		tagStart := offset
+		b := ber[offset]
+		offset++
+		tag := b & 0x1F // last 5 bits
+		if tag == 0x1F {
+			tag = 0
+			for ber[offset] >= 0x80 {
+				tag = tag*128 + ber[offset] - 0x80
+				offset++
+			}
+			tag = tag*128 + ber[offset] - 0x80
+			offset++
+		}
+		tagEnd := offset
+
+		kind := b & 0x20
+
+		// read length
+		var length int
+		l := ber[offset]
+		offset++
+
+		if l > 0x80 {
+			numberOfBytes := (int)(l & 0x7F)
+			if numberOfBytes > 4 { // int is only guaranteed to be 32bit
+				//return nil, 0, errors.New("ber2der: BER tag length too long")
+				return -1
+			}
+			if numberOfBytes == 4 && (int)(ber[offset]) > 0x7F {
+				//return nil, 0, errors.New("ber2der: BER tag length is negative")
+				return -2
+			}
+			if 0x0 == (int)(ber[offset]) {
+				//return nil, 0, errors.New("ber2der: BER tag length has leading zero")
+				return -3
+			}
+			//fmt.Printf("--> (compute length) indicator byte: %x\n", l)
+			//fmt.Printf("--> (compute length) length bytes: % X\n", ber[offset:offset+numberOfBytes])
+			for i := 0; i < numberOfBytes; i++ {
+				length = length*256 + (int)(ber[offset])
+				offset++
+			}
+		} else if l == 0x80 {
+			// find length by searching content
+			/*markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
+			if markerIndex == -1 {
+				return nil, 0, errors.New("ber2der: Invalid BER format")
+			}*/
+			fmt.Println("Got an indef")
+			//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
+		} else {
+			offset++
+		}
+	}
+
+
 }
