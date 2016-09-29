@@ -62,8 +62,7 @@ func ber2der(ber []byte) ([]byte, error) {
 	//fmt.Printf("--> ber2der: Transcoding %d bytes\n", len(ber))
 	out := new(bytes.Buffer)
 
-	noOfEOCs := countEOC(ber)
-	fmt.Printf("Indef count: %d \n\n\n", noOfEOCs)
+	_, _, err := readObjectForIndefCount(ber, 0)
 
 	obj, _, err := readObject(ber, 0)
 	if err != nil {
@@ -302,4 +301,102 @@ func countEOC(ber []byte) (eocCount int) {
 	}
 
 	return eocCounter
+}
+
+
+func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
+
+	//fmt.Printf("\n====> Starting readObject at offset: %d\n\n", offset)
+	tagStart := offset
+	b := ber[offset]
+	offset++
+	tag := b & 0x1F // last 5 bits
+	if tag == 0x1F {
+		tag = 0
+		for ber[offset] >= 0x80 {
+			tag = tag*128 + ber[offset] - 0x80
+			offset++
+		}
+		tag = tag*128 + ber[offset] - 0x80
+		offset++
+	}
+	tagEnd := offset
+
+	kind := b & 0x20
+	/*
+		if kind == 0 {
+			fmt.Print("--> Primitive\n")
+		} else {
+			fmt.Print("--> Constructed\n")
+		}
+	*/
+	// read length
+	var length int
+	l := ber[offset]
+	offset++
+	hack := 0
+	if l > 0x80 {
+		numberOfBytes := (int)(l & 0x7F)
+		if numberOfBytes > 4 { // int is only guaranteed to be 32bit
+			return nil, 0, errors.New("ber2der: BER tag length too long")
+		}
+		if numberOfBytes == 4 && (int)(ber[offset]) > 0x7F {
+			return nil, 0, errors.New("ber2der: BER tag length is negative")
+		}
+		if 0x0 == (int)(ber[offset]) {
+			return nil, 0, errors.New("ber2der: BER tag length has leading zero")
+		}
+		//fmt.Printf("--> (compute length) indicator byte: %x\n", l)
+		//fmt.Printf("--> (compute length) length bytes: % X\n", ber[offset:offset+numberOfBytes])
+		for i := 0; i < numberOfBytes; i++ {
+			length = length*256 + (int)(ber[offset])
+			offset++
+		}
+	} else if l == 0x80 {
+		// find length by searching content
+		fmt.Println("GOT ONE")
+		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
+		if markerIndex == -1 {
+			markerIndex = 0
+		}
+		length = markerIndex
+		hack = 2
+		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
+	} else {
+		length = (int)(l)
+	}
+
+	fmt.Printf("--> length        : %d\n", length)
+	contentEnd := offset + length
+	if contentEnd > len(ber) {
+		return nil, 0, errors.New("ber2der: BER tag length is more than available data")
+	}
+	//fmt.Printf("--> content start : %d\n", offset)
+	//fmt.Printf("--> content end   : %d\n", contentEnd)
+	//fmt.Printf("--> content       : % X\n", ber[offset:contentEnd])
+	var obj asn1Object
+	if kind == 0 {
+		obj = asn1Primitive{
+			tagBytes: ber[tagStart:tagEnd],
+			length:   length,
+			content:  ber[offset:contentEnd],
+		}
+	} else {
+		var subObjects []asn1Object
+		for offset < contentEnd {
+			var subObj asn1Object
+			var err error
+			subObj, offset, err = readObject(ber[:contentEnd], offset)
+			if err != nil {
+				return nil, 0, err
+			}
+			subObjects = append(subObjects, subObj)
+		}
+		obj = asn1Structured{
+			tagBytes: ber[tagStart:tagEnd],
+			content:  subObjects,
+		}
+	}
+
+	return obj, contentEnd + hack, nil
 }
