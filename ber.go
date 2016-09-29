@@ -277,9 +277,9 @@ func countEOC(ber []byte) (eocCount int) {
 			//fmt.Printf("--> (compute length) length bytes: % X\n", ber[offset:offset+numberOfBytes])
 			for i := 0; i < numberOfBytes; i++ {
 				length = length*256 + (int)(ber[offset])
-				fmt.Println("length indicator: ", length)
 				offset++
 			}
+			fmt.Println("length indicator: ", length)
 		} else if l == 0x80 {
 			// find length by searching content
 			/*markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
