@@ -292,7 +292,7 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
 		if markerIndex == -1 {
 			//return nil, 0, errors.New("ber2der: Invalid BER format")
-			markerIndex := bytes.LastIndex(ber[:offset], []byte{0x0, 0x0})
+			markerIndex := bytes.Index(ber[:offset], []byte{0x0, 0x0})
 			if markerIndex == -1 {
 				fmt.Println("doppelerror")
 			}
