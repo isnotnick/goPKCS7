@@ -236,9 +236,6 @@ func countEOC(ber []byte) (eocCount int) {
 	eocCounter := 0
 
 	for offset := 0; offset < len(ber); {
-		
-		fmt.Printf("Offset: %d, length of ber: %d\n\n", offset, len(ber))
-
 		b := ber[offset]
 		offset++
 		tag := b & 0x1F // last 5 bits
@@ -263,17 +260,19 @@ func countEOC(ber []byte) (eocCount int) {
 			numberOfBytes := (int)(l & 0x7F)
 			if numberOfBytes > 4 { // int is only guaranteed to be 32bit
 				//return nil, 0, errors.New("ber2der: BER tag length too long")
-				return -1
+				fmt.Println("Error 1")
 				offset++
 			}
 			if numberOfBytes == 4 && (int)(ber[offset]) > 0x7F {
 				//return nil, 0, errors.New("ber2der: BER tag length is negative")
 				//return -2
+				fmt.Println("Error 2")
 				offset++
 			}
 			if 0x0 == (int)(ber[offset]) {
 				//return nil, 0, errors.New("ber2der: BER tag length has leading zero")
 				//return -3
+				fmt.Println("Error 3")
 				offset++
 			}
 			//fmt.Printf("--> (compute length) indicator byte: %x\n", l)
@@ -289,7 +288,7 @@ func countEOC(ber []byte) (eocCount int) {
 			if markerIndex == -1 {
 				return nil, 0, errors.New("ber2der: Invalid BER format")
 			}*/
-			fmt.Println("Got an indef")
+			fmt.Println("Got an indef at: ", offset)
 			eocCounter++
 			//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 		} else {
