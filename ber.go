@@ -68,8 +68,18 @@ func ber2der(ber []byte) ([]byte, error) {
 	// Count the EoCs
 	_, _, err := readObjectForIndefCount(ber, 0)
 	// Re-arrange the slice of EoC positions
-	for e := 0; e < len(eocCount); e++ {
-		fmt.Printf("At offset %d we have an indef with it's corresponding EoC at %d\n", indefPos[e], eocCount[e])
+	tmpEOC := 0
+	for e := 0; e < len(indefPos); e++ {
+		for f := 0; f < len(eocCount); f++ {
+			if indefPos[e] > eocCount[f] {
+				tmpEOC = eocCount[f]
+				eocCount = append(eocCount[:f], eocCount[f+1:]...)
+				eocCount = append(eocCount, tmpEOC)
+			}
+		}
+	}
+	for y := 0; y < len(indefPos); y++ {
+		fmt.Printf("At offset %d we have an indef with its corresponding EoC at %d\n", indefPos[y], eocCount[y])
 	}
 
 	obj, _, err := readObject(ber, 0)
