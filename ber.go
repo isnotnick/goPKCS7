@@ -206,7 +206,8 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		// find length from the EOC slice
 		length = eocCount[indefCount]
 		indefCount++
-		hack = 2
+		//hack = 2
+		hack = 0
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 	} else {
 		length = (int)(l)
