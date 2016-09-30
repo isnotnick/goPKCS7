@@ -75,7 +75,7 @@ func ber2der(ber []byte) ([]byte, error) {
 		for f := 0; f < len(eocCount); f++ {
 			if indefPos[e] > eocCount[f] {
 				tmpEOC = eocCount[f-1]
-				eocCount = append(eocCount[:f-1], eocCount[f:])
+				eocCount = append(eocCount[:f-1], eocCount[f:]...)
 				eocCount = append(eocCount, tmpEOC)
 				fmt.Println("flipped")
 			}
