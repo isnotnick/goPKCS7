@@ -81,9 +81,9 @@ func ber2der(ber []byte) ([]byte, error) {
 			}
 		}
 	}
-	/*for y := 0; y < len(indefPos); y++ {
+	for y := 0; y < len(indefPos); y++ {
 		fmt.Printf("At offset %d we have an indef with its corresponding EoC at %d\n", indefPos[y], eocCount[y])
-	}*/
+	}
 
 	obj, _, err := readObject(ber, 0)
 	if err != nil {
