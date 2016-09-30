@@ -11,6 +11,8 @@ var encodeIndent = 0
 var eocCount []int
 var indefPos []int
 
+var indefCount = 0
+
 type asn1Object interface {
 	EncodeTo(writer *bytes.Buffer) error
 }
@@ -78,9 +80,9 @@ func ber2der(ber []byte) ([]byte, error) {
 			}
 		}
 	}
-	for y := 0; y < len(indefPos); y++ {
+	/*for y := 0; y < len(indefPos); y++ {
 		fmt.Printf("At offset %d we have an indef with its corresponding EoC at %d\n", indefPos[y], eocCount[y])
-	}
+	}*/
 
 	obj, _, err := readObject(ber, 0)
 	if err != nil {
@@ -202,12 +204,9 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 			offset++
 		}
 	} else if l == 0x80 {
-		// find length by searching content
-		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
-		if markerIndex == -1 {
-			return nil, 0, errors.New("ber2der: Invalid BER format")
-		}
-		length = markerIndex
+		// find length from the EOC slice
+		length = eocPos[indefCount]
+		indefCount++
 		hack = 2
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 	} else {
