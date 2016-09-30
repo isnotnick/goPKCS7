@@ -68,7 +68,7 @@ func ber2der(ber []byte) ([]byte, error) {
 	_, _, err := readObjectForIndefCount(ber, 0)
 	// Re-arrange the slice of EoC positions
 	for e := 0; e < len(eocCount); e++ {
-		fmt.Printf("EoC - in slice %d at offset %d\n", e, eocCount[e])
+		//fmt.Printf("EoC - in slice %d at offset %d\n", e, eocCount[e])
 	}
 
 	obj, _, err := readObject(ber, 0)
@@ -288,10 +288,11 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 			offset++
 		}
 	} else if l == 0x80 {
+		fmt.Printf("Indef length marker at: %d", offset)
 		// find length by searching content
 		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
 		if markerIndex == -1 {
-			// We may already be past other EOCs
+			// We may already be past other EOCs - so work from position of the last found
 			newSearch := offset
 			if offset > eocCount[len(eocCount)-1] {
 			    newSearch = eocCount[len(eocCount)-1]	
@@ -300,13 +301,10 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 			if markerIndex == -1 {
 			    return nil, 0, errors.New("ber2der: Invalid BER format")
 			}
-			fmt.Println("MarkerIndexneg ", markerIndex)
-			fmt.Println("MarkerIndexoffset ", offset)
 			eocCount = append(eocCount, offset - (offset - markerIndex))
 		} else {
 			eocCount = append(eocCount, markerIndex + offset)
 		}
-		fmt.Println("GOT ONE...at: ", markerIndex + offset)
 		
 		length = markerIndex
 		hack = 2
