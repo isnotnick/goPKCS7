@@ -206,7 +206,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		}
 	} else if l == 0x80 {
 		// find length from the EOC slice
-		fmt.Printf("INDEF: got %d from the eocCount, at offset %d\n", eocCount[indefCount], offset-2)
+		//fmt.Printf("INDEF: got %d from the eocCount, at offset %d\n", eocCount[indefCount], offset-2)
 		length = eocCount[indefCount] - offset
 		indefCount++
 		//hack = 2
@@ -217,7 +217,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		length = (int)(l)
 	}
 
-	fmt.Printf("--> length        : %d (at offset: %D)\n", length, offset)
+	//fmt.Printf("--> length        : %d (at offset: %D)\n", length, offset)
 	contentEnd := offset + length
 	if contentEnd > len(ber) {
 		return nil, 0, errors.New("ber2der: BER tag length is more than available data")
