@@ -3,7 +3,6 @@ package pkcs7
 import (
 	"bytes"
 	"errors"
-	"fmt"
 )
 
 var encodeIndent = 0
@@ -205,7 +204,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		}
 	} else if l == 0x80 {
 		// find length from the EOC slice
-		length = eocPos[indefCount]
+		length = eocCount[indefCount]
 		indefCount++
 		hack = 2
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
