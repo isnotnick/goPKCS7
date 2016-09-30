@@ -74,7 +74,7 @@ func ber2der(ber []byte) ([]byte, error) {
 	for e := 0; e < len(indefPos); e++ {
 		for f := 0; f < len(eocCount); f++ {
 			if indefPos[e] > eocCount[f] {
-				tmpEOC = eocCount[f]
+				tmpEOC = eocCount[f-1]
 				eocCount = append(eocCount[:f-1], eocCount[f:]...)
 				eocCount = append(eocCount, tmpEOC)
 			}
