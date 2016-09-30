@@ -205,8 +205,9 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		}
 	} else if l == 0x80 {
 		// find length from the EOC slice
-		fmt.Printf("INDEF: got %d from the eocCount, at offset %d\n", eocCount[indefCount], offset)
-		length = eocCount[indefCount] - 2
+		fmt.Printf("INDEF: got %d from the eocCount, at offset %d\n", eocCount[indefCount], offset-2)
+		length = eocCount[indefCount]
+		length = length - 4
 		indefCount++
 		//hack = 2
 		hack = 0
