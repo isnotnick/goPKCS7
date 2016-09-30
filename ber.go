@@ -77,7 +77,7 @@ func ber2der(ber []byte) ([]byte, error) {
 				tmpEOC = eocCount[f-1]
 				eocCount = append(eocCount[:f-1], eocCount[f:]...)
 				eocCount = append(eocCount, tmpEOC)
-				fmt.Printf("flipped - %d : %d\n",e,f)
+				break
 			}
 		}
 	}
