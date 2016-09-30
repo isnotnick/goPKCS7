@@ -209,7 +209,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		indefCount++
 		//hack = 2
 		hack = 0
-		fmt.Printf("INDEF: got %d from the eocCount", eocCount[indefCount])
+		fmt.Printf("INDEF: got %d from the eocCount, at offset %d\n", eocCount[indefCount], offset)
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 	} else {
 		length = (int)(l)
