@@ -291,10 +291,14 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 		// find length by searching content
 		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
 		if markerIndex == -1 {
-			//return nil, 0, errors.New("ber2der: Invalid BER format")
-			markerIndex := bytes.LastIndex(ber[:offset], []byte{0x0, 0x0})
+			// We may already be past other EOCs
+			newSearch := offset
+			if offset > eocCount[len(eocCount)-1] {
+			    newSearch = eocCount[len(eocCount)-1]	
+			}
+			markerIndex := bytes.LastIndex(ber[:newSearch], []byte{0x0, 0x0})
 			if markerIndex == -1 {
-				fmt.Println("doppelerror")
+			    return nil, 0, errors.New("ber2der: Invalid BER format")
 			}
 			fmt.Println("MarkerIndexneg ", markerIndex)
 			fmt.Println("MarkerIndexoffset ", offset)
@@ -302,7 +306,7 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 		} else {
 			eocCount = append(eocCount, markerIndex + offset)
 		}
-		fmt.Println("GOT ONE...at: ", markerIndex)
+		fmt.Println("GOT ONE...at: ", markerIndex + offset)
 		
 		length = markerIndex
 		hack = 2
