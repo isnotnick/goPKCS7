@@ -90,6 +90,8 @@ func ber2der(ber []byte) ([]byte, error) {
 		return nil, err
 	}
 	obj.EncodeTo(out)
+	eocCount = eocCount[:0]
+	indefPos = indefPos[:0]
 
 	// if offset < len(ber) {
 	//	return nil, fmt.Errorf("ber2der: Content longer than expected. Got %d, expected %d", offset, len(ber))
