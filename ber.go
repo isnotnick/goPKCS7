@@ -9,7 +9,7 @@ import (
 var encodeIndent = 0
 
 var eocCount []int
-vare indefPos []int
+var indefPos []int
 
 type asn1Object interface {
 	EncodeTo(writer *bytes.Buffer) error
