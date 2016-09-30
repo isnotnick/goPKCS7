@@ -9,6 +9,7 @@ import (
 var encodeIndent = 0
 
 var eocCount []int
+vare indefPos []int
 
 type asn1Object interface {
 	EncodeTo(writer *bytes.Buffer) error
@@ -68,7 +69,7 @@ func ber2der(ber []byte) ([]byte, error) {
 	_, _, err := readObjectForIndefCount(ber, 0)
 	// Re-arrange the slice of EoC positions
 	for e := 0; e < len(eocCount); e++ {
-		//fmt.Printf("EoC - in slice %d at offset %d\n", e, eocCount[e])
+		fmt.Printf("At offset %d we have an indef with it's corresponding EoC at %d\n", indefPos[e], eocCount[e])
 	}
 
 	obj, _, err := readObject(ber, 0)
@@ -288,7 +289,6 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 			offset++
 		}
 	} else if l == 0x80 {
-		fmt.Printf("Indef length marker at: %d", offset)
 		// find length by searching content
 		markerIndex := bytes.LastIndex(ber[offset:], []byte{0x0, 0x0})
 		if markerIndex == -1 {
@@ -305,6 +305,7 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 		} else {
 			eocCount = append(eocCount, markerIndex + offset)
 		}
+		indefPos = append(indefPos, offset - 2)
 		
 		length = markerIndex
 		hack = 2
