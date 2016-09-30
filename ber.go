@@ -81,9 +81,9 @@ func ber2der(ber []byte) ([]byte, error) {
 			}
 		}
 	}
-	for y := 0; y < len(indefPos); y++ {
+	/*for y := 0; y < len(indefPos); y++ {
 		fmt.Printf("At offset %d we have an indef with its corresponding EoC at %d\n", indefPos[y], eocCount[y])
-	}
+	}*/
 
 	obj, _, err := readObject(ber, 0)
 	if err != nil {
@@ -209,8 +209,8 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		//fmt.Printf("INDEF: got %d from the eocCount, at offset %d\n", eocCount[indefCount], offset-2)
 		length = eocCount[indefCount] - offset
 		indefCount++
-		//hack = 2
-		hack = 0
+		hack = 2
+		//hack = 0
 		
 		//fmt.Printf("--> (compute length) marker found at offset: %d\n", markerIndex+offset)
 	} else {
