@@ -93,7 +93,7 @@ func ber2der(ber []byte) ([]byte, error) {
 	//eocCount = eocCount[:0]
 	eocCount = nil
 	//indefPos = indefPos[:0]
-	indefPost = nil
+	indefPos = nil
 	indefCount = 0
 
 	// if offset < len(ber) {
