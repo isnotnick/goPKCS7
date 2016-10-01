@@ -310,6 +310,7 @@ func readObjectForIndefCount(ber []byte, offset int) (asn1Object, int, error) {
 		if markerIndex == -1 {
 			// We may already be past other EOCs - so work from position of the last found
 			newSearch := offset
+			fmt.Printf("Offset: %d, eocCount: %d\n")
 			if offset > eocCount[len(eocCount)-1] {
 			    newSearch = eocCount[len(eocCount)-1]	
 			}
