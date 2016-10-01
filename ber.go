@@ -220,7 +220,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		length = (int)(l)
 	}
 
-	//fmt.Printf("--> length        : %d (at offset: %D)\n", length, offset)
+	fmt.Printf("--> length        : %d (at offset: %D)\n", length, offset)
 	contentEnd := offset + length
 	if contentEnd > len(ber) {
 		return nil, 0, errors.New("ber2der: BER tag length is more than available data")
