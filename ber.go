@@ -90,8 +90,8 @@ func ber2der(ber []byte) ([]byte, error) {
 		return nil, err
 	}
 	obj.EncodeTo(out)
-	eocCount = eocCount[:0]
-	indefPos = indefPos[:0]
+	//eocCount = eocCount[:0]
+	//indefPos = indefPos[:0]
 	indefCount = 0
 
 	// if offset < len(ber) {
