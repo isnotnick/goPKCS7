@@ -67,9 +67,8 @@ func ber2der(ber []byte) ([]byte, error) {
 	//fmt.Printf("--> ber2der: Transcoding %d bytes\n", len(ber))
 	out := new(bytes.Buffer)
 	
-	for z := 0; z < len(indefPos); z++ {
-		fmt.Printf("At offset %d we have an indef with its corresponding EoC at %d\n", indefPos[z], eocCount[z])
-	}
+	fmt.Printf("LENNNNGNGNGHT: %d\n\n", len(indefPos))
+		 
 
 	// Count the EoCs
 	_, _, err := readObjectForIndefCount(ber, 0)
