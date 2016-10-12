@@ -140,8 +140,10 @@ func Parse(data []byte) (p7 *PKCS7, err error) {
 	// fmt.Printf("--> Content Type: %s", info.ContentType)
 	switch {
 	case info.ContentType.Equal(oidSignedData):
+		fmt.Printf("--> Content Type: SIGNEDDATA\n\n")
 		return parseSignedData(info.Content.Bytes)
 	case info.ContentType.Equal(oidEnvelopedData):
+		fmt.Printf("--> Content Type: ENVELOPEDDATA\n\n")
 		return parseEnvelopedData(info.Content.Bytes)
 	}
 	return nil, ErrUnsupportedContentType
