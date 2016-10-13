@@ -169,8 +169,9 @@ func parseSignedData(data []byte) (*PKCS7, error) {
 	}
 	// Compound octet string
 	if compound.IsCompound {
-		fmt.Println("IS COMPOUND!")
+		fmt.Println("IS COMPOUND - and length: ", len(compound.Bytes))
 		if _, err = asn1.Unmarshal(compound.Bytes, &content); err != nil {
+			fmt.Println("BUT ERROR!")
 			return nil, err
 		}
 	} else {
