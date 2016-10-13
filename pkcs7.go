@@ -174,6 +174,7 @@ func parseSignedData(data []byte) (*PKCS7, error) {
 			return nil, err
 		}
 		fmt.Println("Size of content (unmarshaled bytes): ", len(content))
+		fmt.Printf("%x\n", content)
 	} else {
 		// assuming this is tag 04
 		content = compound.Bytes
