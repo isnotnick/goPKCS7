@@ -170,7 +170,7 @@ func parseSignedData(data []byte) (*PKCS7, error) {
 		//if _, err = asn1.Unmarshal(compound.Bytes, &content); err != nil {
 		//	return nil, err
 		//}
-		content = compound.Bytes
+		content = compound.FullBytes
 	} else {
 		// assuming this is tag 04
 		content = compound.Bytes
