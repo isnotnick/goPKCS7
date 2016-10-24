@@ -167,8 +167,8 @@ func parseSignedData(data []byte) (*PKCS7, error) {
 	}
 	// Compound octet string
 	if compound.IsCompound {
-		//fmt.Println("Size of compound.Bytes: ", len(compound.Bytes))
-		//fmt.Println("Size of compound.FullBytes: ", len(compound.FullBytes))
+		fmt.Println("Size of compound.Bytes: ", len(compound.Bytes))
+		fmt.Println("Size of compound.FullBytes: ", len(compound.FullBytes))
 		if _, err = asn1.Unmarshal(compound.Bytes, &content); err != nil {
 			return nil, err
 		}
@@ -179,7 +179,7 @@ func parseSignedData(data []byte) (*PKCS7, error) {
 			}
 			content = append(content, content2...)
 		}
-		//fmt.Println("Size of content (unmarshaled bytes): ", len(content))
+		fmt.Println("Size of content (unmarshaled bytes): ", len(content))
 
 	} else {
 		// assuming this is tag 04
