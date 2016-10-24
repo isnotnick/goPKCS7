@@ -170,7 +170,7 @@ func parseSignedData(data []byte) (*PKCS7, error) {
 		fmt.Println("Size of compound.Bytes: ", len(compound.Bytes))
 		fmt.Println("Size of compound.FullBytes: ", len(compound.FullBytes))
 		fmt.Printf("%x\n", compound.Bytes)
-		if _, err = asn1.Unmarshal(compound.Bytes, &content); err != nil {
+		if _, err = asn1.Unmarshal(compound.FullBytes, &content); err != nil {
 			return nil, err
 		}
 		fmt.Println("Size of content (unmarshaled bytes): ", len(content))
