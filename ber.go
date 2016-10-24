@@ -65,10 +65,7 @@ func ber2der(ber []byte) ([]byte, error) {
 		return nil, errors.New("ber2der: input ber is empty")
 	}
 	//fmt.Printf("--> ber2der: Transcoding %d bytes\n", len(ber))
-	out := new(bytes.Buffer)
-	
-	fmt.Printf("LENNNNGNGNGHT: %d\n\n", len(indefPos))
-		 
+	out := new(bytes.Buffer)		 
 
 	// Count the EoCs
 	_, _, err := readObjectForIndefCount(ber, 0)
@@ -84,9 +81,9 @@ func ber2der(ber []byte) ([]byte, error) {
 			}
 		}
 	}
-	for y := 0; y < len(indefPos); y++ {
-		fmt.Printf("At offset %d we have an indef with its corresponding EoC at %d\n", indefPos[y], eocCount[y])
-	}
+	//for y := 0; y < len(indefPos); y++ {
+	//	fmt.Printf("At offset %d we have an indef with its corresponding EoC at %d\n", indefPos[y], eocCount[y])
+	//}
 
 	obj, _, err := readObject(ber, 0)
 	if err != nil {
@@ -225,7 +222,7 @@ func readObject(ber []byte, offset int) (asn1Object, int, error) {
 		length = (int)(l)
 	}
 
-	fmt.Printf("--> length        : %d (at offset: %D)\n", length, offset)
+	//fmt.Printf("--> length        : %d (at offset: %D)\n", length, offset)
 	contentEnd := offset + length
 	if contentEnd > len(ber) {
 		return nil, 0, errors.New("ber2der: BER tag length is more than available data")
