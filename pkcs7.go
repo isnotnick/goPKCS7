@@ -174,7 +174,7 @@ func parseSignedData(data []byte) (*PKCS7, error) {
 		}
 		if len(content) == 1000 {
 			var content2 unsignedData
-			if _, err = asn1.Unmarshal(compound.Bytes[1002:], &content2); err != nil {
+			if _, err = asn1.Unmarshal(compound.Bytes[1004:], &content2); err != nil {
 				return nil, err
 			}
 			content = append(content, content2...)
