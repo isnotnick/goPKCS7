@@ -161,20 +161,26 @@ func parseSignedData(data []byte) (*PKCS7, error) {
 
 	// The Content.Bytes maybe empty on PKI responses.
 	if len(sd.ContentInfo.Content.Bytes) > 0 {
-		if _, err := asn1.Unmarshal(sd.ContentInfo.Content.FullBytes, &compound); err != nil {
+		if _, err := asn1.Unmarshal(sd.ContentInfo.Content.Bytes, &compound); err != nil {
 			return nil, err
 		}
 	}
 	// Compound octet string
 	if compound.IsCompound {
-		fmt.Println("Size of compound.Bytes: ", len(compound.Bytes))
-		fmt.Println("Size of compound.FullBytes: ", len(compound.FullBytes))
-		fmt.Printf("%x\n", compound.Bytes)
-		if _, err = asn1.Unmarshal(compound.FullBytes, &content); err != nil {
+		//fmt.Println("Size of compound.Bytes: ", len(compound.Bytes))
+		//fmt.Println("Size of compound.FullBytes: ", len(compound.FullBytes))
+		if _, err = asn1.Unmarshal(compound.Bytes, &content); err != nil {
 			return nil, err
 		}
-		fmt.Println("Size of content (unmarshaled bytes): ", len(content))
-		fmt.Printf("%x\n", content)
+		if len(content) == 1000 {
+			var content2 unsignedData
+			if _, err = asn1.Unmarshal(compound.Bytes[1000:], &content2); err != nil {
+				return nil, err
+			}
+			content = append(content, content2...)
+		}
+		//fmt.Println("Size of content (unmarshaled bytes): ", len(content))
+
 	} else {
 		// assuming this is tag 04
 		content = compound.Bytes
